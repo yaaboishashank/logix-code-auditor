@@ -1,0 +1,59 @@
+.auth-method-page {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 24px;
+  background-color: hsl(var(--canvas));
+  background-image:
+    linear-gradient(hsl(var(--line) / 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--line) / 0.2) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.auth-method-card {
+  width: min(100%, 500px);
+  padding: clamp(24px, 5vw, 44px);
+  border: 1px solid hsl(var(--line));
+  background: hsl(var(--surface-muted));
+  text-align: center;
+}
+
+.auth-method-card .auth-method-icon {
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 24px;
+  color: hsl(var(--brand));
+}
+
+.auth-method-card h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(25px, 4vw, 34px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.auth-method-card p {
+  margin-top: 18px;
+  color: hsl(var(--ink-soft));
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.auth-method-actions {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.auth-method-back {
+  padding: 10px;
+  color: hsl(var(--ink-muted));
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.auth-method-back:hover {
+  color: hsl(var(--brand));
+}

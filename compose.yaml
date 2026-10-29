@@ -1,0 +1,21 @@
+services:
+  server:
+    build: ./server
+    env_file:
+      - ./server/.env
+    environment:
+      PORT: "3000"
+      CLIENT_URL: "http://localhost:5173"
+      NODE_ENV: "development"
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: "http://localhost:3000"
+    ports:
+      - "127.0.0.1:5173:80"
+    depends_on:
+      - server

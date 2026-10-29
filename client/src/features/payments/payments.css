@@ -1,0 +1,166 @@
+.finding-chat .finding-chat-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.finding-chat .finding-chat-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.finding-chat-submit-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 190px;
+  flex-shrink: 0;
+}
+
+.finding-chat-submit-area > .ui-button {
+  width: 100%;
+}
+
+.finding-chat .chat-credits {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  min-width: 0;
+}
+
+.finding-chat .chat-credits-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.finding-chat .chat-credits-row > span {
+  color: hsl(var(--ink-muted));
+  font-size: 11px;
+}
+
+.finding-chat .chat-credits-buy,
+.finding-chat .chat-payment-check {
+  min-height: 28px;
+  padding: 3px 6px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: hsl(var(--brand));
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.finding-chat .chat-credits-buy:hover,
+.finding-chat .chat-payment-check:hover {
+  background: hsl(var(--brand) / 0.08);
+}
+
+.finding-chat .chat-credits button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.finding-chat .chat-credits p {
+  margin: 4px 0 0;
+  color: hsl(var(--ink-muted));
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.finding-chat .chat-credits .chat-payment-error {
+  color: hsl(var(--warning));
+}
+
+@media (max-width: 600px) {
+  .finding-chat .finding-chat-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .finding-chat-submit-area {
+    width: 100%;
+  }
+}
+
+.credit-required-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(400px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 32px;
+  overflow-y: auto;
+  border: 1px solid hsl(var(--line));
+  background: hsl(var(--surface-muted));
+  color: hsl(var(--ink));
+  box-shadow: 0 24px 80px #0008;
+}
+
+.credit-required-dialog::backdrop {
+  background: rgb(0 0 0 / 65%);
+  backdrop-filter: blur(5px);
+}
+
+.credit-dialog-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: hsl(var(--ink-muted));
+  font-size: 26px;
+}
+
+.credit-dialog-label {
+  display: block;
+  margin-bottom: 18px;
+  color: hsl(var(--brand));
+  font: 10px var(--font-mono);
+  letter-spacing: 0.14em;
+}
+
+.credit-required-dialog h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.credit-required-dialog p {
+  margin: 12px 0 24px;
+  color: hsl(var(--ink-muted));
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.credit-dialog-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.credit-dialog-later {
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  color: hsl(var(--ink-soft));
+  font-size: 12px;
+}
+
+.credit-required-dialog button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

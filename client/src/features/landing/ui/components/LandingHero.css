@@ -1,0 +1,102 @@
+.logix-welcome {
+  display: grid;
+  place-items: center;
+  min-height: clamp(460px, 70svh, 660px);
+  padding: 80px 24px;
+  text-align: center;
+  border-bottom: 1px solid hsl(var(--line) / 0.6);
+  background-color: hsl(var(--canvas));
+  background-image:
+    linear-gradient(
+      hsl(var(--line) / 0.2) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      hsl(var(--line) / 0.2) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      ellipse at 65% 45%,
+      hsl(var(--brand) / 0.1),
+      transparent 65%
+    );
+  background-size: 44px 44px, 44px 44px, 100% 100%;
+}
+
+.logix-welcome-content {
+  width: min(100%, 760px);
+}
+
+.logix-welcome h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(38px, 6vw, 68px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+
+.logix-welcome h1 span {
+  color: hsl(var(--brand));
+  text-transform: capitalize;
+}
+
+.logix-welcome-subtitle {
+  margin-top: 26px;
+  color: hsl(var(--ink));
+  font-size: clamp(16px, 2vw, 19px);
+  font-weight: 500;
+}
+
+.logix-welcome-description {
+  max-width: 550px;
+  margin: 16px auto 0;
+  color: hsl(var(--ink-muted));
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.logix-welcome-description strong {
+  color: hsl(var(--brand));
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.logix-welcome-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  margin-top: 30px;
+}
+
+.logix-welcome-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  color: hsl(var(--ink-soft));
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.logix-welcome-link:hover {
+  color: hsl(var(--brand));
+}
+
+@media (max-width: 600px) {
+  .logix-welcome {
+    min-height: 440px;
+    padding: 64px 20px;
+    background-size: 32px 32px, 32px 32px, 100% 100%;
+  }
+
+  .logix-welcome-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

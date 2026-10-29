@@ -1,0 +1,32 @@
+.workspace-logout {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: hsl(var(--ink-soft));
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms, color 150ms;
+}
+
+.workspace-logout:hover:not(:disabled) {
+  background: rgb(248 113 113 / 8%);
+  border-color: rgb(248 113 113 / 20%);
+  color: #fca5a5;
+}
+
+.workspace-logout:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.workspace-logout-error {
+  padding: 8px 16px;
+  color: #fca5a5;
+  font-size: 12px;
+}
