@@ -15,6 +15,10 @@ import errorHandler from "./middlewares/error.middleware.js";
 
 const app = express();
 
+if (config.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
 app.use(
   cors({
     origin: config.CLIENT_URL,
@@ -22,7 +26,6 @@ app.use(
   }),
 );
 
-// Webhook signature verification needs the original request body.
 app.post(
   "/api/payments/webhook",
   express.raw({

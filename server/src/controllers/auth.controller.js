@@ -10,20 +10,25 @@ import passport from "../config/passport.js";
 const cookieOptions = {
   httpOnly: true,
   secure: config.NODE_ENV === "production",
-  sameSite: "lax",
+  sameSite: config.NODE_ENV === "production" ? "none" : "lax",
   path: "/",
 };
 
-const hashToken = (token) => createHash("sha256").update(token).digest("hex");
+const hashToken = (token) =>
+  createHash("sha256").update(token).digest("hex");
 
 const setAuthCookies = (res, session, refreshToken) => {
-  const accessToken = jwt.sign({ sid: session.id }, config.JWT_SECRET, {
-    subject: session.user.toString(),
-    algorithm: "HS256",
-    issuer: "logix",
-    audience: "logix-client",
-    expiresIn: "15m",
-  });
+  const accessToken = jwt.sign(
+    { sid: session.id },
+    config.JWT_SECRET,
+    {
+      subject: session.user.toString(),
+      algorithm: "HS256",
+      issuer: "logix",
+      audience: "logix-client",
+      expiresIn: "15m",
+    },
+  );
 
   res.cookie("accessToken", accessToken, {
     ...cookieOptions,
@@ -47,16 +52,21 @@ export const register = async (req, res) => {
   }
 
   const { name, email, password } = req.body;
+
   const user = await User.create({
     name,
     email: email.toLowerCase(),
     password,
   });
 
-  res.status(201).json({
+  return res.status(201).json({
     success: true,
     message: "Account created successfully",
-    user: { id: user.id, name: user.name, email: user.email },
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
   });
 };
 
@@ -71,6 +81,7 @@ export const login = async (req, res) => {
   }
 
   const { email, password } = req.body;
+
   const user = await User.findOne({
     email: email.toLowerCase(),
   }).select("+password");
@@ -92,10 +103,14 @@ export const login = async (req, res) => {
 
   setAuthCookies(res, session, refreshToken);
 
-  res.json({
+  return res.json({
     success: true,
     message: "Logged in successfully",
-    user: { id: user.id, name: user.name, email: user.email },
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
   });
 };
 
@@ -116,7 +131,9 @@ export const refresh = async (req, res) => {
       tokenHash: hashToken(token),
       expiresAt: { $gt: new Date() },
     },
-    { $set: { tokenHash: hashToken(refreshToken) } },
+    {
+      $set: { tokenHash: hashToken(refreshToken) },
+    },
     { new: true },
   );
 
@@ -140,35 +157,50 @@ export const refresh = async (req, res) => {
 
   setAuthCookies(res, session, refreshToken);
 
-  res.json({
+  return res.json({
     success: true,
     message: "Session refreshed",
-    user: { id: user.id, name: user.name, email: user.email },
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
   });
 };
 
 export const logout = async (req, res) => {
   const refreshToken = req.cookies?.refreshToken;
 
-  if (typeof refreshToken === "string" && /^[a-f0-9]{64}$/.test(refreshToken)) {
-    await Session.deleteOne({ tokenHash: hashToken(refreshToken) });
+  if (
+    typeof refreshToken === "string" &&
+    /^[a-f0-9]{64}$/.test(refreshToken)
+  ) {
+    await Session.deleteOne({
+      tokenHash: hashToken(refreshToken),
+    });
   }
 
   if (req.cookies?.accessToken) {
     let payload;
 
     try {
-      payload = jwt.verify(req.cookies.accessToken, config.JWT_SECRET, {
-        algorithms: ["HS256"],
-        issuer: "logix",
-        audience: "logix-client",
-        ignoreExpiration: true,
-      });
+      payload = jwt.verify(
+        req.cookies.accessToken,
+        config.JWT_SECRET,
+        {
+          algorithms: ["HS256"],
+          issuer: "logix",
+          audience: "logix-client",
+          ignoreExpiration: true,
+        },
+      );
     } catch (error) {
       if (
-        !["JsonWebTokenError", "TokenExpiredError", "NotBeforeError"].includes(
-          error.name,
-        )
+        ![
+          "JsonWebTokenError",
+          "TokenExpiredError",
+          "NotBeforeError",
+        ].includes(error.name)
       ) {
         throw error;
       }
@@ -190,7 +222,7 @@ export const logout = async (req, res) => {
   res.clearCookie("accessToken", cookieOptions);
   res.clearCookie("refreshToken", cookieOptions);
 
-  res.json({
+  return res.json({
     success: true,
     message: "Logged out successfully",
   });
@@ -199,7 +231,7 @@ export const logout = async (req, res) => {
 export const getMe = (req, res) => {
   const { id, name, email } = req.user;
 
-  res.json({
+  return res.json({
     success: true,
     user: { id, name, email },
   });
@@ -224,6 +256,7 @@ export const googleLogin = (req, res, next) => {
 
   res.cookie("googleOAuth", token, {
     ...cookieOptions,
+    sameSite: "lax",
     maxAge: 10 * 60 * 1000,
   });
 
@@ -266,38 +299,12 @@ export const googleCallback = (req, res, next) => {
 
         setAuthCookies(res, session, refreshToken);
 
-        return res.redirect(new URL("/workspace", config.CLIENT_URL).href);
+        return res.redirect(
+          new URL("/workspace", config.CLIENT_URL).href,
+        );
       } catch (error) {
         next(error);
       }
     },
   )(req, res, next);
 };
-
-const postAuth = async (path, body) => {
-  const response = await fetch(`${API_URL}/api/auth${path}`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const data = await response.json().catch(() => null);
-
-  if (!response.ok || !data?.success) {
-    throw new Error(
-      data?.errors?.[0]?.msg ||
-        data?.errors?.[0]?.message ||
-        data?.message ||
-        "Unable to complete the request. Please try again.",
-    );
-  }
-
-  return data;
-};
-
-export const loginUser = ({ email, password }) =>
-  postAuth("/login", { email, password });
-
-export const registerUser = ({ name, email, password }) =>
-  postAuth("/register", { name, email, password });

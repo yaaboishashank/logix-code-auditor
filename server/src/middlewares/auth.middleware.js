@@ -5,8 +5,12 @@ import config from "../config/config.js";
 
 export const checkOrigin = (req, res, next) => {
   const origin = req.get("origin");
+  const changesData = !["GET", "HEAD", "OPTIONS"].includes(req.method);
 
-  if (origin && origin !== config.CLIENT_URL) {
+  if (
+    (origin && origin !== config.CLIENT_URL) ||
+    (changesData && !origin)
+  ) {
     return res.status(403).json({
       success: false,
       message: "Origin not allowed",
@@ -72,9 +76,11 @@ export const protect = async (req, res, next) => {
     next();
   } catch (error) {
     if (
-      ["JsonWebTokenError", "TokenExpiredError", "NotBeforeError"].includes(
-        error.name,
-      )
+      [
+        "JsonWebTokenError",
+        "TokenExpiredError",
+        "NotBeforeError",
+      ].includes(error.name)
     ) {
       return res.status(401).json({
         success: false,
@@ -95,11 +101,15 @@ export const verifyGoogleState = (req, res, next) => {
   });
 
   try {
-    const payload = jwt.verify(req.cookies?.googleOAuth, config.JWT_SECRET, {
-      algorithms: ["HS256"],
-      issuer: "logix",
-      audience: "logix-google-oauth",
-    });
+    const payload = jwt.verify(
+      req.cookies?.googleOAuth,
+      config.JWT_SECRET,
+      {
+        algorithms: ["HS256"],
+        issuer: "logix",
+        audience: "logix-google-oauth",
+      },
+    );
 
     if (
       typeof req.query.state !== "string" ||
@@ -112,18 +122,14 @@ export const verifyGoogleState = (req, res, next) => {
     }
   } catch (error) {
     if (
-      !["JsonWebTokenError", "TokenExpiredError", "NotBeforeError"].includes(
-        error.name,
-      )
+      ![
+        "JsonWebTokenError",
+        "TokenExpiredError",
+        "NotBeforeError",
+      ].includes(error.name)
     ) {
       return next(error);
     }
-
-    console.log("Google OAuth debug:", {
-      cookieReceived: Boolean(req.cookies?.googleOAuth),
-      error: error.name,
-      message: error.message,
-    });
 
     return res.status(401).json({
       success: false,
