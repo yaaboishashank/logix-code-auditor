@@ -1,69 +1,42 @@
-# LogiX
+# LOGIX
+### Clarity before the crash.
 
-LogiX scans a GitHub repository for missing error logs and unhandled errors, then lets you ask an AI about what it found.
+AI-powered logging analysis for Node.js repositories. LOGIX identifies potential logging gaps, suggests code changes, and helps developers understand findings through a repository-aware chatbot.
 
-I built it because many backend bugs are hard to trace: a `catch` block swallows the error and nothing gets logged. LogiX finds those spots and explains why logging is needed there.
+## Features
 
-## What it does
+- **Repository scanning** — Import source files from public GitHub repositories.
+- **AI logging review** — Detect potential logging gaps with severity levels and source references.
+- **Code comparison** — Review original code alongside suggested logging changes.
+- **Repository-aware chat** — Discuss findings using RAG-powered code retrieval.
+- **Review workflow** — Track scans, update finding statuses, and revisit conversations.
+- **Authentication** — Email/password and Google OAuth with cookie-based sessions.
+- **Chat credits** — Razorpay Test Mode integration for purchasing message packs.
 
-- Pulls a repository through the GitHub API and splits the files into chunks.
-- Converts the chunks into vector embeddings and stores them in a vector database.
-- Flags places where logs are missing or errors are not handled, with a suggested fix next to the original code.
-- Answers debugging questions with Claude Haiku, using the relevant chunks from your own repo as context (RAG).
-- Compares two versions of the same code, for example V1 and V2 controllers, and shows where one logs errors and the other ignores them.
-- Signs users in with Google OAuth 2.0.
+## Tech Stack
 
-## Built with
+| Layer | Technologies |
+|---|---|
+| Frontend | React, Vite, React Router, CSS, GSAP |
+| Backend | Node.js, Express, MongoDB, Mongoose |
+| AI & Retrieval | LangGraph, Claude, Google embeddings, Pinecone |
+| Authentication | JWT, Passport.js, Google OAuth |
+| Payments | Razorpay — Test Mode |
+| Deployment | Docker, Render |
 
-Node.js, Claude Haiku, a vector database, the GitHub API, and Google OAuth 2.0.
+## Workflow
 
-## Running it locally
+GitHub repository → Source ingestion → Code chunking → Embeddings & indexing → AI logging analysis → Findings dashboard → RAG chatbot
 
-```bash
-git clone https://github.com/yaaboishashank/Logix-Code-Intelligence-and-Log-Auditor.git
-cd Logix-Code-Intelligence-and-Log-Auditor
-npm install
-```
+## Project Structure
 
-Create a `.env` file with your own keys:
+- `client/` — React frontend organised by feature.
+- `server/` — Express API with separate AI, RAG, and payment modules.
 
-```
-ANTHROPIC_API_KEY=
-GITHUB_TOKEN=
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-SESSION_SECRET=
-```
+## Scope
 
-Then start the server:
+LOGIX reviews source code for potential logging gaps. Findings and suggested changes require developer review; it does not monitor runtime crashes or guarantee complete logging coverage.
 
-```bash
-npm start
-```
+---
 
-## Example
-
-LogiX flagged this `catch` block because the error is discarded and nothing is logged:
-
-```js
-} catch {
-  sendJson(res, 503, { success: false, message: "Order could not be saved." });
-}
-```
-
-The suggested fix logs an operation name and a request ID before sending the response:
-
-```js
-} catch {
-  console.error({
-    event: "order_operation_failed",
-    operation: "saveOrder",
-    requestId: req.requestId,
-  });
-  sendJson(res, 503, { success: false, message: "Order could not be saved." });
-}
-```
-
-## Notes
-
-AI suggestions can be wrong, so review each one before applying it.
+Built by [Shashank Sharma](https://github.com/yaaboishashank)
